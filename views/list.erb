@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>一番近い駅</title>
+	<script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+</head>
+<body>
+	<table>
+		<% @stations.each do |station|%>
+			<tr class="station">
+				<td class="line"><%= station["line"] %></td>
+				<td class="name"><%= station["name"]%></td>
+			</tr>
+		<% end %>
+	</table>
+	
+	<a href="https://www.google.com/maps/@#{@y_query},#{@x_query},15z?hl=ja" target="_blank">Google Mapで位置を見てみる</a>
+	<div id ="detail">
+		<h2>次の駅</h2>
+		<div class="next"></div>
+	</div>
+	
+	
+	<script>
+	// クリック時に線と駅名を表示
+	// window.onload = function(){
+	// 	$(".station").click(function() {
+	// 		var line = $(".line",this).text();
+	// 		var name = $(".name",this).text();
+	// 		console.log(line+ "" +name);
+	// 	});
+	// }
+	
+	window.onload = function(){
+		$(".station").click(function() {
+			var line = $(".line",this).text();
+			var name = $(".name",this).text();
+			
+		$.ajax("/api/station",{
+			type: "GET",
+			data: {"line": line, "name": name},
+			datatype: 'json'
+		})
+		.done(function(json){
+			$("#detail .next").text(json["next"])
+		});
+		});
+	}
+	</script>
+</body>
+</html>
